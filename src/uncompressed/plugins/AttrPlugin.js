@@ -1,22 +1,23 @@
 /*!
- * VERSION: 0.2.0
- * DATE: 2013-07-10
- * UPDATES AND DOCS AT: http://www.greensock.com
+ * VERSION: 0.5.0
+ * DATE: 2015-08-29
+ * UPDATES AND DOCS AT: http://greensock.com
  *
- * @license Copyright (c) 2008-2014, GreenSock. All rights reserved.
- * This work is subject to the terms at http://www.greensock.com/terms_of_use.html or for
+ * @license Copyright (c) 2008-2016, GreenSock. All rights reserved.
+ * This work is subject to the terms at http://greensock.com/standard-license or for
  * Club GreenSock members, the software agreement that was issued with your membership.
  * 
  * @author: Jack Doyle, jack@greensock.com
  */
-(window._gsQueue || (window._gsQueue = [])).push( function() {
+var _gsScope = (typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window; //helps ensure compatibility with AMD/RequireJS and CommonJS/Node
+(_gsScope._gsQueue || (_gsScope._gsQueue = [])).push( function() {
 	
 	"use strict";
 
-	window._gsDefine.plugin({
+	_gsScope._gsDefine.plugin({
 		propName: "attr",
 		API: 2,
-		version: "0.2.0",
+		version: "0.5.0",
 
 		//called when the tween renders for the first time. This is where initial values should be recorded and any setup routines should run.
 		init: function(target, value, tween) {
@@ -24,28 +25,13 @@
 			if (typeof(target.setAttribute) !== "function") {
 				return false;
 			}
-			this._target = target;
-			this._proxy = {};
 			for (p in value) {
-				if ( this._addTween(this._proxy, p, parseFloat(target.getAttribute(p)), value[p], p) ) {
-					this._overwriteProps.push(p);
-				}
+				this._addTween(target, "setAttribute", target.getAttribute(p) + "", value[p] + "", p, false, p);
+				this._overwriteProps.push(p);
 			}
 			return true;
-		},
-
-		//called each time the values should be updated, and the ratio gets passed as the only parameter (typically it's a value between 0 and 1, but it can exceed those when using an ease like Elastic.easeOut or Back.easeOut, etc.)
-		set: function(ratio) {
-			this._super.setRatio.call(this, ratio);
-			var props = this._overwriteProps,
-				i = props.length,
-				p;
-			while (--i > -1) {
-				p = props[i];
-				this._target.setAttribute(p, this._proxy[p] + "");
-			}
 		}
 
 	});
 
-}); if (window._gsDefine) { window._gsQueue.pop()(); }
+}); if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); }
